@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Comment</key>
+	<string>Created with Recipe Robot v2.3.1 (https://github.com/homebysix/recipe-robot)</string>
+	<key>Description</key>
+	<string>Downloads the latest version of Egnyte WebEdit and imports it into Munki.</string>
+	<key>Identifier</key>
+	<string>com.github.bryanheinz.munki.EgnyteWebEdit</string>
+	<key>Input</key>
+	<dict>
+		<key>MUNKI_REPO_SUBDIR</key>
+		<string>apps/%NAME%</string>
+		<key>NAME</key>
+		<string>EgnyteWebEdit</string>
+		<key>pkginfo</key>
+		<dict>
+			<key>blocking_applications</key>
+			<array>
+				<string>Egnyte WebEdit.app</string>
+			</array>
+			<key>catalogs</key>
+			<array>
+				<string>testing</string>
+			</array>
+			<key>description</key>
+			<string>Egnyte WebEdit enables you to open a file directly from the Egnyte Cloud using any standard browser. Any changes you make are saved back to the Egnyte Cloud automatically.</string>
+			<key>developer</key>
+			<string>Egnyte Inc</string>
+			<key>display_name</key>
+			<string>Egnyte WebEdit</string>
+			<key>name</key>
+			<string>%NAME%</string>
+			<key>unattended_install</key>
+			<true/>
+			<key>postinstall_script</key>
+			<string>#!/bin/bash
+appLA="/Applications/Egnyte WebEdit.app/Contents/Resources/com.egnyte.egnyteWebEdit.plist"
+libLA="/Library/LaunchAgents/com.egnyte.egnyteWebEdit.plist"
+shouldLoadAgent=true
+theUser=$(/usr/bin/stat -f "%Su" /dev/console)
+if [[ "$theUser" == "root" ]]; then
+	theUser=$(/usr/bin/defaults read /Library/Preferences/com.apple.loginwindow.plist lastUserName)
+	shouldLoadAgent=false
+fi
+uid=$(/usr/bin/id -u "$theUser")
+/bin/launchctl print system/com.egnyte.egnyteWebEdit 2&gt; /dev/null &gt; /dev/null \
+	&amp;&amp; /bin/launchctl bootout system/com.egnyte.egnyteWebEdit
+/bin/launchctl print gui/$uid/com.egnyte.egnyteWebEdit 2&gt; /dev/null &gt; /dev/null \
+	&amp;&amp; /bin/launchctl bootout gui/$uid/com.egnyte.egnyteWebEdit
+/bin/cp "$appLA" "$libLA"
+/usr/libexec/PlistBuddy -c "Set :ProgramArguments:0 /Applications/Egnyte WebEdit.app/Contents/MacOS/Egnyte WebEdit" "$libLA"
+/usr/sbin/chown root:wheel "$libLA"
+/bin/chmod 644 "$libLA"
+if [[ $shouldLoadAgent == true ]]; then
+	/bin/launchctl bootstrap gui/$uid $libLA \
+		|| echo "error loading LaunchAgent."
+fi
+exit 0
+</string>
+		</dict>
+	</dict>
+	<key>MinimumVersion</key>
+	<string>2.3</string>
+	<key>ParentRecipe</key>
+	<string>com.github.bryanheinz.download.EgnyteWebEdit</string>
+	<key>Process</key>
+	<array>
+		<dict>
+			<key>Arguments</key>
+			<dict>
+				<key>pkg_path</key>
+				<string>%pathname%</string>
+				<key>repo_subdirectory</key>
+				<string>%MUNKI_REPO_SUBDIR%</string>
+			</dict>
+			<key>Processor</key>
+			<string>MunkiImporter</string>
+		</dict>
+	</array>
+</dict>
+</plist>
