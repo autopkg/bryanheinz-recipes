@@ -20,17 +20,21 @@
 		<dict>
 			<key>Arguments</key>
 			<dict>
-				<key>appcast_url</key>
-				<string>https://updates.getcleanshot.com/v3/appcast.xml</string>
+				<key>re_pattern</key>
+				<string>(?m)&#x3C;div class=&#x22;version&#x22;.+?&#x3E;(\d+\.\d+(?:\.\d)*)&#x3C;/div&#x3E;</string>
+				<key>url</key>
+				<string>https://cleanshot.com/changelog</string>
 			</dict>
 			<key>Processor</key>
-			<string>SparkleUpdateInfoProvider</string>
+			<string>URLTextSearcher</string>
 		</dict>
 		<dict>
 			<key>Arguments</key>
 			<dict>
 				<key>filename</key>
-				<string>%NAME%-%version%.dmg</string>
+				<string>%NAME%-%match%.dmg</string>
+				<key>url</key>
+				<string>https://updates.getcleanshot.com/v3/CleanShot-X-%match%.dmg</string>
 			</dict>
 			<key>Processor</key>
 			<string>URLDownloader</string>
