@@ -48,7 +48,7 @@
 				<string>%pathname%</string>
 				<key>expected_authority_names</key>
 				<array>
-					<string>Developer ID Installer: Wiretrustee UG (haftungsbeschrankt) (TA739QLA7A)</string>
+					<string>Developer ID Installer: NetBird GmbH (TA739QLA7A)</string>
 					<string>Developer ID Certification Authority</string>
 					<string>Apple Root CA</string>
 				</array>
